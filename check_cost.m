@@ -23,11 +23,7 @@ for product= 1:m
         
         if product_diff<=0
             product_remaining(period, product)= 0;
-            try
             shortage(period, m)= -product_diff;
-            catch
-                rnf=87
-            end
         else
             product_remaining(period, product)= product_diff;
             shortage(period, product)= 0;
@@ -44,9 +40,9 @@ for product= 1:m
         a= Tij*(1- L(period, product)) + Tijdash * L(period, product);
 %         H= H + h(product) * [ ((exp(-f*a) - exp(-f*(Tij-1)))/f) * D(period, product) * ( ((exp(-f*a)*(a+1/f)- exp(-f*(Tij-1))*(Tij-1+1/f)))/(exp(-f*a)-exp(-f*T(period-1, 0)))) - ((product_previously_stocked+product_ordered(period, product))/D(period, product)) - (T(period-1, product)) ) ];
         if period==1
-            H= H + h(product) * exp(f);% [ ((exp(-f*a) - exp(-f*(Tij-1)))/f) *  D(period, product) * ( ((exp(-f*a)*(a+1/f)- exp(-f*(Tij-1))*(Tij-1+1/f)))/(exp(-f*a)-exp(-f*0)) - ((product_previously_stocked+product_ordered(period, product))/D(period, product)) - 0) ];
+            H= H + h(product) * ((exp(-f*a) - exp(-f*(Tij-1)))/f) *  D(period, product) * ( ((exp(-f*a)*(a+1/f)- exp(-f*(Tij-1))*(Tij-1+1/f)))/(exp(-f*a)-exp(-f*0)) - ((product_previously_stocked+product_ordered(period, product))/D(period, product)) - 0);
         else
-            H= H + h(product) * exp(f);% [ ((exp(-f*a) - exp(-f*(Tij-1)))/f) *  D(period, product) * ( ((exp(-f*a)*(a+1/f)- exp(-f*(Tij-1))*(Tij-1+1/f)))/(exp(-f*a)-exp(-f*Tij-1)) - ((product_previously_stocked+product_ordered(period, product))/D(period, product)) - Tij-1) ];
+            H= H + h(product) *((exp(-f*a) - exp(-f*(Tij-1)))/f) *  D(period, product) * ( ((exp(-f*a)*(a+1/f)- exp(-f*(Tij-1))*(Tij-1+1/f)))/(exp(-f*a)-exp(-f*Tij-1)) - ((product_previously_stocked+product_ordered(period, product))/D(period, product)) - Tij-1);
         end
         back_order(period, product)= percent_back_order * shortage(period, product); % num of products back- ordered
         lost_sale(period, product)= (1-percent_back_order) * shortage(period, product);% num of products of lost- sale
@@ -55,8 +51,9 @@ for product= 1:m
         lost_sale_cost= lost_sale(period, product) * prod_cost_in_period(period, product);
         
 %       Iij= funI(h, Tij, Tijdash, Iij, period, product, f, D, product_previously_stocked, product_ordered(period, product) );
-        BO= BO + back_order_cost * exp(f); %  exp(-f*Tij) * beta(product) * Iij; %integral(funI, Tijdash, Tij);
-        LS= LS + lost_sale_cost *  exp(f); %exp(-f*Tij) * (1-beta(product)) * Iij; %integral(funI, Tijdash, Tij);
+        Iij=funI(h, Tij, Tijdash, Iij, period, product, f, D, product_previously_stocked, product_ordered ); 
+        BO= BO + back_order_cost * exp(-f*Tij) * beta(product) * integral(Iij, Tijdash, Tij);
+        LS= LS + lost_sale_cost *  exp(-f*Tij) * (1-beta(product)) * integral(Iij, Tijdash, Tij);
         
 %         Ui,j,k: A binary variable; set equal 1 if item i is purchased at
 %         price break point k in period j, and 0 otherwise 1
