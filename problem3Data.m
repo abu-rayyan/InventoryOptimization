@@ -11,7 +11,8 @@ O= [16 	17	19	22	13	21 14 16 15 15
     15  19  22  21  11  14 15 19 12 14% Oi, j represent the minimum quantity of a product that must be ordered in period i so that there is no shortage
     16  13  14  12  16  13 13 18 23 20
     20  17  13  16  16  14 19 16 21 15];
-beta= [0.3	0.5	0.6	0.4	0.4	0.6 0.45 0.75 0.3 0.5];
+betai= [0.3	0.5	0.6	0.4	0.4	0.6 0.45 0.75 0.3 0.5];
+B= [9 4 8 7 6 9 3 5 4 3];
 prod_cost_in_period= [7 8 8 8 6 7 6 8 7 5
                       5 6 5 8 7 10 11 6 13 8
                       5 3 7 6 4 8 11 8 7 10
@@ -46,3 +47,17 @@ ranges=  {{[0, 35] , [35, 50], [50, inf]};
      max_cost=40000;
      batch_size=[9 4 8 7 6 9 3 5 4 3];
      max_box=10000;
+     M2= max_box;
+     
+     T(1:m-1)=2; % each product takes 2 units of time in each period
+     Tj= 2;
+     
+     LS_cost=    [7 8 8 8 6 7 6 8 7 5;
+                 5 6 5 8 7 10 11 6 13 8;
+                 5 3 7 6 4 8 11 8 7 10;
+                 8 10 7 4 7 9 11 5 8 10];
+     BO_cost= [9 5 9 5 9 9 10 8 6 4
+                4 9 4 9 7 4 4 5 6 7
+                6 5 4 7 8 6 8 9 10 11
+                8 11 10 5 8 8 9 6 10 7];
+     
